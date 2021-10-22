@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-web-deployment   #Наавание деплоймента 
+  labels: 
+    app: my-k8s-aplication
+spec:                       #С какими подами будет работать деплоймент, с соответствующими лейблам 
+  selector:
+    matchLabels:
+      project: kgb          #лейбл
+  template:                 #Описание пода
+    metadata:
+      labels:
+        project: kgb
+    spec:                 #Спецификация пода
+      conteiners:
+        - name: kgb-meb
+          image: adv4000/k8sphp:vesion1
+          ports:
+            - containerPort: 80
