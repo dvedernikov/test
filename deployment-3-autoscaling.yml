@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-web-deployment-autoscaling   #Наавание деплоймента 
+  labels: 
+    app: my-k8s-aplication
+    env: prod
+    owner: DimaViediernikov
+spec:                       #С какими подами будет работать деплоймент, с соответствующими лейблам 
+  replicas: 2               #Количество реплик
+  selector:
+    matchLabels:
+      project: mossad          #лейбл
+  template:                 #Описание пода
+    metadata:
+      labels:
+        project: mossad
+    spec:                 #Спецификация пода
+      containers:
+        - name: mossad-meb
+          image: adv4000/k8sphp:vesion1
+          ports:
+            - containerPort: 80
+
+---
+apiVersion: autoscaling/v2beta1     
+kind: HorizontalPodAutoscaler
+metadata:
+  name: my-autoscaling
+  spec:
+    scaleTargetRef:
+      apiVersion: apps/v2betalv1
+      kind: Deployment
+      name: my-web-deployment-autoscaling
+    minReplicas: 2
+    maxReplicas: 4
+    metrics:
+      - type: Resource
+        resource:
+          name: cpu
+          targetAverageUtilization: 70
+      - type: Resource
+        resource:
+          name: memory
+          targetAverageUtilization: 80
